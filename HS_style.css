@@ -1,0 +1,39 @@
+/* © 2026 BFS HSE — Jérémy Bizeul / Vigie-lance. Charte BFS : gris #464645, jaune #f3ab12, rouge #b2181a, noir #080808 */
+*{box-sizing:border-box}
+body{margin:0;font-family:'Montserrat',system-ui,sans-serif;color:#464645;background:#f6f6f5;font-size:14px}
+.entete{background:#080808;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:3px solid #f3ab12;flex-wrap:wrap;gap:8px}
+.marque{display:flex;align-items:center;gap:10px;font-size:16px}
+.compte{display:flex;align-items:center;gap:10px;font-size:12px}
+.onglets{display:flex;gap:4px;padding:8px 16px 0;background:#fff;border-bottom:1px solid #ddd;overflow-x:auto}
+.onglets button{border:0;background:none;padding:10px 16px;font:inherit;font-weight:600;color:#464645;cursor:pointer;border-bottom:3px solid transparent}
+.onglets button.actif{color:#080808;border-bottom-color:#f3ab12}
+main{max-width:1200px;margin:0 auto;padding:16px}
+h2{margin:0;font-size:18px;color:#080808}h3{margin:20px 0 8px;color:#080808}
+.barre{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.btn{background:#f3ab12;color:#080808;border:0;border-radius:6px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer}
+.btn.sec{background:#fff;color:#464645;border:1px solid #bbb}.btn.petit{padding:6px 10px;font-size:12px}.btn.plein{width:100%;margin-top:8px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:#fff;border:2px solid #ddd;border-radius:8px;padding:12px;font:inherit;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.kpi b{font-size:26px;color:#080808}.kpi.ret b{color:#b2181a}.kpi.av b{color:#c98a00}.kpi.actif{border-color:#080808}
+.tableau{background:#fff;border-radius:8px;overflow-x:auto;border:1px solid #e3e3e3}
+table{border-collapse:collapse;width:100%;min-width:680px}
+th{background:#464645;color:#fff;text-align:left;padding:9px 10px;font-size:12px}
+td{padding:9px 10px;border-top:1px solid #eee;vertical-align:top}
+tr.en_retard td:first-child{border-left:4px solid #b2181a}tr.a_venir td:first-child{border-left:4px solid #f3ab12}
+tr.cliquable{cursor:pointer}tr.cliquable:hover{background:#faf5e6}
+.badge{padding:3px 9px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap}
+.badge.ok{background:#e4f2e4;color:#256b25}.badge.av{background:#fdf0cf;color:#8a5d00}.badge.ret{background:#b2181a;color:#fff}
+.carte{background:#fff;border:1px solid #e3e3e3;border-radius:8px;padding:14px}.carte p{margin:6px 0}
+.vide{text-align:center;color:#888;padding:30px}.sous{color:#777;margin:4px 0 14px}.erreur{color:#b2181a;font-weight:600}
+.login{max-width:340px;margin:8vh auto;background:#fff;padding:28px;border-radius:12px;text-align:center;border-top:4px solid #f3ab12}
+.login h1{margin:8px 0 0;color:#080808}.login form{text-align:left}
+label{display:block;font-weight:600;font-size:12px;margin:10px 0}
+input,select,textarea{display:block;width:100%;margin-top:4px;padding:9px;border:1px solid #bbb;border-radius:6px;font:inherit;color:#080808}
+.modal-fond{position:fixed;inset:0;background:rgba(8,8,8,.55);display:flex;align-items:center;justify-content:center;padding:12px;z-index:50}
+.modal{background:#fff;border-radius:10px;padding:20px;width:100%;max-width:420px;max-height:92vh;overflow:auto}.modal h3{margin-top:0}
+.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:8px;color:#fff;z-index:99;font-weight:600}
+.toast.ok{background:#256b25}.toast.ko{background:#b2181a}
+#hs-erreur{display:none;position:fixed;top:0;left:0;right:0;background:#b2181a;color:#fff;padding:8px;z-index:100;font-size:12px}
+.site-copyright{max-width:640px;margin:0 auto;padding:16px 20px 24px;text-align:center;font-size:11px;color:#464645;opacity:.7;line-height:1.5}
+@media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}main{padding:10px}}
