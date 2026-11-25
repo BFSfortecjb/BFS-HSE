@@ -80,10 +80,12 @@ async function ficheVehicule(id) {
   }
   const rc = await SB.from('controles').select('id,date_controle,km,anomalie,remarque').eq('vehicule_id', id).order('date_controle', { ascending: false }).limit(10);
   const verifs = rc.data || [];
+  const sectionPleinsHtml = v.type === 'vehicule' ? await sectionPleins(id) : '';
   const nomType = eid => (ech.find(e => e.echeance_id === eid) || {}).type_nom || '';
   $('#contenu').innerHTML = `
     <div class="barre"><button class="btn sec" onclick="rafraichir()">← Retour</button>
       <button class="btn" onclick="ouvrirVerification('${esc(id)}')">✔ Vérifier le véhicule</button>
+      ${v.type === 'vehicule' ? `<button class="btn" onclick="formPlein('${esc(id)}')">⛽ Plein</button>` : ''}
       ${peutEcrire() ? `<button class="btn sec" onclick="formVehicule('${esc(id)}')">Modifier</button>` : ''}</div>
     <div class="carte"><h2>${esc(v.immatriculation)} <small>${v.type === 'remorque' ? 'Remorque' : 'Véhicule'}</small></h2>
       <p>${esc([v.marque, v.modele, v.designation].filter(Boolean).join(' '))}</p>
@@ -92,6 +94,7 @@ async function ficheVehicule(id) {
     <h3>Échéances</h3>
     ${ech.length ? `<div class="tableau"><table><thead><tr><th>Échéance</th><th>Dernière</th><th>Prochaine</th><th>Reste</th><th>État</th><th></th></tr></thead>
       <tbody>${ech.map(r => ligneEcheance(r, false)).join('')}</tbody></table></div>` : '<p class="vide">Aucune échéance suivie.</p>'}
+    ${v.type === 'vehicule' ? sectionPleinsHtml : ''}
     <h3>Vérifications du véhicule</h3>
     ${verifs.length ? `<div class="tableau"><table><thead><tr><th>Date</th><th>Km</th><th>Résultat</th><th>Remarque</th><th></th></tr></thead>
       <tbody>${verifs.map(c => `<tr><td>${fmtDate(c.date_controle)}</td><td>${fmtKm(c.km)}</td>
