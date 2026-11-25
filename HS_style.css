@@ -48,3 +48,4 @@ input,select,textarea{display:block;width:100%;margin-top:4px;padding:9px;border
 
 .aide{font-size:12px;color:#666;margin:8px 0;line-height:1.4}.boutons{display:flex;gap:8px}
 .filtre{max-width:320px;margin:0 0 12px}[hidden]{display:none!important}
+.nowrap{white-space:nowrap}

@@ -67,6 +67,9 @@ function ouvrirIntervention(id) {
       ${estVehicule ? `<label>Kilométrage <small>(dernier relevé : ${fmtKm(r.km_actuel)})</small>
         <input type="number" name="km" min="0" inputmode="numeric" required></label>` : ''}
       <label>Réalisé par<input type="text" name="par" placeholder="Garage, agent…"></label>
+      ${estEpi ? `<label>Nature de la vérification<select name="nature">
+        <option value="vgp"${r.type_code === 'verif_epi_annuelle' ? ' selected' : ''}>Vérification générale périodique</option><option value="approfondie">Vérification approfondie</option>
+        <option value="avant_usage">Contrôle avant usage</option><option value="autre">Autre</option></select></label>` : ''}
       ${estEpi ? `<label>Résultat<select name="resultat">
         <option value="conforme">Conforme</option><option value="a_remplacer">À remplacer</option><option value="retire">Retiré</option></select></label>` : ''}
       <label>Commentaire<textarea name="com" rows="2"></textarea></label>
@@ -83,7 +86,8 @@ async function enregistrerIntervention(ev, echeanceId) {
     km: v('km') === '' ? null : parseInt(v('km'), 10),
     realise_par: v('par') || null,
     commentaire: v('com') || null,
-    resultat: v('resultat') || null
+    resultat: v('resultat') || null,
+    nature: v('nature') || null
   };
   const { error } = await SB.from('interventions').insert(ligne);
   if (error) { toast(messageLisible(error), false); return; }
