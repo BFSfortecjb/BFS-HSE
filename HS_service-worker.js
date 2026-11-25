@@ -1,9 +1,9 @@
 /* © 2026 BFS HSE — Jérémy Bizeul / Vigie-lance. */
 'use strict';
 // À INCRÉMENTER à chaque mise en ligne, sinon les téléphones gardent l'ancienne version.
-const VERSION_CACHE = 'hse-v6';
+const VERSION_CACHE = 'hse-v8';
 const COQUILLE = ['./', 'index.html', 'HS_style.css', 'HS_debug.js', 'HS_config.js', 'HS_core.js', 'HS_alertes.js',
-  'HS_vehicules.js', 'HS_catalogue_epi.js', 'HS_epi.js', 'HS_controles.js', 'HS_pdf.js', 'HS_app.js', 'manifest.json', 'icons/HS_icon-192.png', 'icons/HS_icon-512.png'];
+  'HS_vehicules.js', 'HS_catalogue_epi.js', 'HS_epi.js', 'HS_controles.js', 'HS_pdf.js', 'HS_plateau.js', 'HS_app.js', 'manifest.json', 'icons/HS_icon-192.png', 'icons/HS_icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(VERSION_CACHE).then(c => c.addAll(COQUILLE))); self.skipWaiting(); });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith('hse-') && k !== VERSION_CACHE).map(k => caches.delete(k)))));

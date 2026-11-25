@@ -2,9 +2,9 @@
 'use strict';
 // Écrans : connexion, navigation par onglets, démarrage.
 function onglets() {
-  return [['echeances', 'Échéances'], ['vehicules', 'Véhicules'], ['epi', peutEcrire() ? 'EPI' : 'Mes EPI']];
+  return [['echeances', 'Échéances'], ['vehicules', 'Véhicules'], ['epi', peutEcrire() ? 'EPI' : 'Mes EPI'], ['plateau', 'Plateau technique']];
 }
-const RENDUS = { echeances: rendreEcheances, vehicules: rendreVehicules, epi: rendreEpi };
+const RENDUS = { echeances: rendreEcheances, vehicules: rendreVehicules, epi: rendreEpi, plateau: rendrePlateau };
 
 function ecranConnexion(msg) {
   $('#app').innerHTML = `
@@ -53,6 +53,7 @@ async function demarrer() {
     return;
   }
   await chargerProfils();
+  try { const n = await SB.rpc('nom_agent', { p: S.user.id }); S.nomMoi = n.data || S.user.email; } catch (e) { S.nomMoi = S.user.email; }
   coquille(); rafraichir();
 }
 document.addEventListener('DOMContentLoaded', () => {

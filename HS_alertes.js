@@ -30,7 +30,7 @@ function ligneEcheance(r, avecCible = true) {
     <td>${texteProchaine(r)}</td>
     <td>${esc(texteReste(r))}</td>
     <td>${badgeEtat(r.etat)}</td>
-    <td>${peutEcrire() ? `<button class="btn petit" onclick="ouvrirIntervention('${esc(r.echeance_id)}')">Saisir</button>` : ''}</td>
+    <td>${(peutEcrire() || r.cible_type === 'plateau') ? `<button class="btn petit" onclick="ouvrirIntervention('${esc(r.echeance_id)}')">Saisir</button>` : ''}</td>
   </tr>`;
 }
 async function rendreEcheances() {
@@ -59,6 +59,13 @@ function ouvrirIntervention(id) {
   if (!r) return;
   const estVehicule = r.cible_type === 'vehicule';
   const estEpi = r.cible_type === 'epi';
+  const estPlateau = r.cible_type === 'plateau';
+  const perem = /^peremption/.test(r.type_code);
+  const opt = (v, l, sel) => `<option value="${v}"${sel ? ' selected' : ''}>${l}</option>`;
+  const nature = estEpi
+    ? opt('vgp', 'Vérification générale périodique', r.type_code === 'verif_epi_annuelle') + opt('approfondie', 'Vérification approfondie') + opt('avant_usage', 'Contrôle avant usage') + opt('autre', 'Autre')
+    : opt('visuelle', 'Inspection visuelle', /visuelle$/.test(r.type_code)) + opt('vgp', 'Vérification périodique', !/visuelle$/.test(r.type_code) && !perem)
+      + opt('approfondie', 'Vérification approfondie') + opt('entretien', 'Entretien / remplacement', perem) + opt('autre', 'Autre');
   ouvrirModal(`
     <h3>Saisir une intervention</h3>
     <p class="sous">${esc(r.type_nom)} — <b>${esc(r.cible_libelle)}</b></p>
@@ -66,12 +73,11 @@ function ouvrirIntervention(id) {
       <label>Date<input type="date" name="date" value="${aujourdhui()}" required></label>
       ${estVehicule ? `<label>Kilométrage <small>(dernier relevé : ${fmtKm(r.km_actuel)})</small>
         <input type="number" name="km" min="0" inputmode="numeric" required></label>` : ''}
-      <label>Réalisé par<input type="text" name="par" placeholder="Garage, agent…"></label>
-      ${estEpi ? `<label>Nature de la vérification<select name="nature">
-        <option value="vgp"${r.type_code === 'verif_epi_annuelle' ? ' selected' : ''}>Vérification générale périodique</option><option value="approfondie">Vérification approfondie</option>
-        <option value="avant_usage">Contrôle avant usage</option><option value="autre">Autre</option></select></label>` : ''}
-      ${estEpi ? `<label>Résultat<select name="resultat">
-        <option value="conforme">Conforme</option><option value="a_remplacer">À remplacer</option><option value="retire">Retiré</option></select></label>` : ''}
+      <label>Réalisé par<input type="text" name="par" value="${estVehicule ? '' : esc(S.nomMoi)}" placeholder="Garage, agent, organisme…"></label>
+      ${(estEpi || estPlateau) ? `<label>Nature de l'intervention<select name="nature">${nature}</select></label>
+        <label>Résultat<select name="resultat"><option value="conforme">Conforme</option>
+        <option value="a_remplacer">À remplacer</option><option value="retire">Retiré</option></select></label>` : ''}
+      ${perem ? '<label>Nouvelle date de péremption <small>(si le produit a été remplacé)</small><input type="date" name="nouvelle"></label>' : ''}
       <label>Commentaire<textarea name="com" rows="2"></textarea></label>
       <div class="actions"><button type="button" class="btn sec" onclick="fermerModal()">Annuler</button>
       <button class="btn">Enregistrer</button></div>
@@ -87,7 +93,8 @@ async function enregistrerIntervention(ev, echeanceId) {
     realise_par: v('par') || null,
     commentaire: v('com') || null,
     resultat: v('resultat') || null,
-    nature: v('nature') || null
+    nature: v('nature') || null,
+    nouvelle_date_fixe: v('nouvelle') || null
   };
   const { error } = await SB.from('interventions').insert(ligne);
   if (error) { toast(messageLisible(error), false); return; }
