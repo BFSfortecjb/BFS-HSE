@@ -37,3 +37,14 @@ input,select,textarea{display:block;width:100%;margin-top:4px;padding:9px;border
 #hs-erreur{display:none;position:fixed;top:0;left:0;right:0;background:#b2181a;color:#fff;padding:8px;z-index:100;font-size:12px}
 .site-copyright{max-width:640px;margin:0 auto;padding:16px 20px 24px;text-align:center;font-size:11px;color:#464645;opacity:.7;line-height:1.5}
 @media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}main{padding:10px}}
+
+.modal.large{max-width:620px}h4{margin:16px 0 4px;color:#080808;font-size:13px;border-bottom:2px solid #f3ab12;padding-bottom:3px}
+.point{padding:8px 0;border-bottom:1px solid #eee}.point.ko{background:#fdeeee;margin:0 -8px;padding:8px}
+.point-ligne{display:flex;justify-content:space-between;align-items:center;gap:10px}.choix{display:flex;gap:6px;flex-shrink:0}
+.radio{display:flex;align-items:center;gap:3px;margin:0;padding:6px 10px;border:1px solid #bbb;border-radius:6px;font-size:12px;cursor:pointer}
+.radio input{width:auto;margin:0}.bloq{color:#b2181a}.anomalie{margin-top:8px}.anomalie .com{margin-bottom:6px}
+.photo{display:inline-block;background:#f3ab12;color:#080808;padding:8px 12px;border-radius:6px;cursor:pointer;margin:0}.photo input{display:none}
+.photo-anomalie{max-width:100%;border-radius:6px;margin-top:6px}
+
+.aide{font-size:12px;color:#666;margin:8px 0;line-height:1.4}.boutons{display:flex;gap:8px}
+.filtre{max-width:320px;margin:0 0 12px}[hidden]{display:none!important}
