@@ -1,5 +1,6 @@
 /* © 2026 BFS HSE — Jérémy Bizeul / Vigie-lance. Tous droits réservés. */
 'use strict';
+const HS_ORIGINE_A = 'hse-orig-4c91e7b2';   // marqueur d'origine (ne pas modifier)
 // Socle : connexion Supabase, état global, utilitaires.
 const SB = supabase.createClient(HS_CONFIG.url, HS_CONFIG.cle, {
   auth: { storageKey: HS_CONFIG.storageKey },

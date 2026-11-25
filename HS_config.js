@@ -7,5 +7,5 @@ const HS_CONFIG = {
   cle: 'sb_publishable_UhkImOyooXPnAqTCNMJ4wA_VVqscCmK',
   schema: 'hse',
   storageKey: 'hse-auth',      // préfixé : la mémoire du navigateur est commune aux applis BFS
-  version: '0.1.0'
+  version: '0.6.0'
 };

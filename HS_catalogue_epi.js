@@ -1,5 +1,6 @@
 /* © 2026 BFS HSE — Jérémy Bizeul / Vigie-lance. Catalogue générique d'EPI (issu de CATALOGUE_EPI_GENERIQUE.xlsx). */
 'use strict';
+const HS_ORIGINE_C = 'hse-orig-1fe6a29d';   // marqueur d'origine (ne pas modifier)
 // [code, famille, libellé, norme de référence, vérification périodique, durée de vie indicative en années (ou null)]
 const CATALOGUE_EPI = [
  [

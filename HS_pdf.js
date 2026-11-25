@@ -1,5 +1,6 @@
 /* © 2026 BFS HSE — Jérémy Bizeul / Vigie-lance. Tous droits réservés. */
 'use strict';
+const HS_ORIGINE_B = 'hse-orig-b83d05fa';   // marqueur d'origine (ne pas modifier)
 // Documents PDF : registre de suivi des EPI et fiche individuelle d'un EPI (jsPDF + autotable en CDN).
 const NATURES_VERIF = { vgp: 'Vérification générale périodique', approfondie: 'Vérification approfondie', avant_usage: 'Contrôle avant usage', autre: 'Autre' };
 const RESULTATS_VERIF = { conforme: 'Conforme', a_remplacer: 'À remplacer', retire: 'Retiré' };
