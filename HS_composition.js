@@ -71,10 +71,9 @@ async function enregistrerComposant(ev, eqId, plateauId, id) {
   if (r.error) { toast(messageLisible(r.error), false); return; }
   fermerModal(); toast('Élément enregistré'); ficheEquipement(eqId, plateauId);
 }
-async function supprimerComposant(id, eqId, plateauId) {
-  const { error } = await SB.from('plateau_composants').update({ actif: false }).eq('id', id);
-  if (error) { toast(messageLisible(error), false); return; }
-  fermerModal(); toast('Élément retiré de la liste'); ficheEquipement(eqId, plateauId);
+function supprimerComposant(id, eqId, plateauId) {
+  const nom = (document.querySelector('#modal input[name=desig]') || {}).value || 'cet élément';
+  mettreALaCorbeille('plateau_composants', id, nom, () => ficheEquipement(eqId, plateauId));
 }
 
 // ---------- Contrôle du contenu (tout technicien ou formateur) ----------

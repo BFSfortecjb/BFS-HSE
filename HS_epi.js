@@ -43,7 +43,7 @@ function afficherEpi() {
         <td>${esc(d.numero_serie)}${d.commentaire ? `<br><small>${esc(d.commentaire)}</small>` : ''}</td>
         <td>${fmtDate(d.date_fabrication)}</td><td>${fmtDate(d.date_achat)}</td><td>${fmtDate(d.date_mise_en_service)}</td><td>${fmtDate(d.date_peremption)}</td>
         <td>${esc(ETATS_EPI[d.etat] || d.etat)}</td><td>${pire(d.id) ? badgeEtat(pire(d.id)) : '—'}</td>
-        <td class="nowrap">${peutEcrire() ? `<button class="btn petit" onclick="verifierEpi('${esc(d.id)}')">Vérifier</button> ` : ''}<button class="btn sec petit" onclick="ficheEpiPdf('${esc(d.id)}')">Fiche PDF</button></td></tr>`).join('')}</tbody></table></div>`
+        <td class="nowrap">${peutEcrire() ? `<button class="btn petit" onclick="verifierEpi('${esc(d.id)}')">Vérifier</button> ` : ''}<button class="btn sec petit" onclick="ficheEpiPdf('${esc(d.id)}')">Fiche PDF</button>${peutEcrire() ? ` <button class="btn sec petit" onclick="mettreALaCorbeille('epi_dotations','${esc(d.id)}',${jq(((d.epi_types || {}).nom || 'EPI') + (d.numero_serie ? ' n° ' + d.numero_serie : ''))},rafraichir)">Supprimer</button>` : ''}</td></tr>`).join('')}</tbody></table></div>`
       : '<p class="vide">Aucun EPI à afficher.</p>'}`;
 }
 

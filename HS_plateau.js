@@ -72,7 +72,8 @@ async function fichePlateau(id) {
   $('#contenu').innerHTML = `
     <div class="barre"><button class="btn sec" onclick="rafraichir()">← Retour</button>
       <div class="boutons">${peutEcrire() ? `<button class="btn sec" onclick="formPlateau('${esc(id)}')">Modifier</button>
-      <button class="btn" onclick="formEquipement('${esc(id)}')">+ Équipement</button>` : ''}</div></div>
+      <button class="btn" onclick="formEquipement('${esc(id)}')">+ Équipement</button>
+      <button class="btn sec" onclick="mettreALaCorbeille('plateaux','${esc(id)}',${jq(p.data.nom)},rafraichir)">Supprimer</button>` : ''}</div></div>
     <div class="carte"><h2>${esc(p.data.nom)}</h2>
       <p>${esc(THEMES_PLATEAU[p.data.theme] || '')}${p.data.agence ? ' · ' + esc(p.data.agence) : ''}</p>
       <p>Responsable du plateau : <b>${esc(noms[p.data.responsable_id] || '—')}</b></p></div>
@@ -83,7 +84,7 @@ async function fichePlateau(id) {
         <td>${esc(e.numero_serie) || '—'}${e.numero_lot ? '<br><small>lot ' + esc(e.numero_lot) + '</small>' : ''}</td>
         <td>${esc(ETATS_EPI[e.etat] || e.etat)}</td>
         <td>${pireEtat(S.echeances.filter(x => x.plateau_equipement_id === e.id)) ? badgeEtat(pireEtat(S.echeances.filter(x => x.plateau_equipement_id === e.id))) : '—'}</td>
-        <td class="nowrap"><button class="btn sec petit" onclick="ficheEquipement('${esc(e.id)}','${esc(id)}')">Contenu</button> <button class="btn sec petit" onclick="formSignalement('${esc(e.id)}','${esc(id)}')">Signaler un défaut</button></td></tr>`).join('')}</tbody></table></div>`
+        <td class="nowrap"><button class="btn sec petit" onclick="ficheEquipement('${esc(e.id)}','${esc(id)}')">Contenu</button> <button class="btn sec petit" onclick="formSignalement('${esc(e.id)}','${esc(id)}')">Signaler un défaut</button>${peutEcrire() ? ` <button class="btn sec petit" onclick="formModifierEquipement('${esc(e.id)}','${esc(id)}')">Modifier</button>` : ''}</td></tr>`).join('')}</tbody></table></div>`
       : '<p class="vide">Aucun matériel dans ce plateau.</p>'}
     <h3>Échéances du plateau</h3>
     ${ech.length ? `<div class="tableau"><table><thead><tr><th>Élément</th><th>Échéance</th><th>Dernière</th><th>Prochaine</th><th>Reste</th><th>État</th><th></th></tr></thead>
@@ -221,4 +222,38 @@ async function enregistrerTraitement(ev, sid, plateauId) {
   const { error } = await SB.from('plateau_signalements').update({ statut: f.statut.value, suite_donnee: f.suite.value.trim() || null, maj_le: new Date().toISOString() }).eq('id', sid);
   if (error) { toast(messageLisible(error), false); return; }
   fermerModal(); toast('Signalement mis à jour'); fichePlateau(plateauId);
+}
+
+// ---------- Modifier / supprimer un équipement ----------
+async function formModifierEquipement(id, plateauId) {
+  const { data: e, error } = await SB.from('plateau_equipements').select('*').eq('id', id).single();
+  if (error) { toast(messageLisible(error), false); return; }
+  ouvrirModal(`<h3>Modifier l'équipement</h3>
+    <form onsubmit="enregistrerModifEquipement(event,'${esc(id)}','${esc(plateauId)}')">
+      <label>Catégorie<select name="cat">${Object.entries(CAT_PLATEAU).map(([k, v]) => `<option value="${k}"${e.categorie === k ? ' selected' : ''}>${esc(v.nom)}</option>`).join('')}</select></label>
+      <p class="aide">Changer la catégorie ne recrée pas les échéances déjà suivies.</p>
+      <label>Désignation<input name="desig" required value="${esc(e.designation)}"></label>
+      <label>Marque / fabricant<input name="marque" value="${esc(e.marque)}"></label>
+      <label>Modèle<input name="modele" value="${esc(e.modele)}"></label>
+      <label>N° de série<input name="serie" value="${esc(e.numero_serie)}"></label>
+      <label>N° de lot<input name="lot" value="${esc(e.numero_lot)}"></label>
+      <label>Date de fabrication<input type="date" name="fab" value="${esc(e.date_fabrication)}"></label>
+      <label>Date d'achat<input type="date" name="achat" value="${esc(e.date_achat)}"></label>
+      <label>Date de mise en service<input type="date" name="mes" value="${esc(e.date_mise_en_service)}"></label>
+      <label>État<select name="etat">${Object.entries(ETATS_EPI).map(([k, v]) => `<option value="${k}"${e.etat === k ? ' selected' : ''}>${esc(v)}</option>`).join('')}</select></label>
+      <label>Précisions<input name="com" value="${esc(e.commentaire)}"></label>
+      <div class="actions"><button type="button" class="btn sec" onclick="mettreALaCorbeille('plateau_equipements','${esc(id)}',${jq(e.designation)},()=>fichePlateau('${esc(plateauId)}'))">Supprimer</button>
+        <button type="button" class="btn sec" onclick="fermerModal()">Annuler</button><button class="btn">Enregistrer</button></div>
+    </form>`);
+}
+async function enregistrerModifEquipement(ev, id, plateauId) {
+  ev.preventDefault();
+  const f = ev.target.elements, cat = CAT_PLATEAU[f.cat.value];
+  const ligne = { categorie: f.cat.value, designation: f.desig.value.trim(), marque: f.marque.value.trim() || null, modele: f.modele.value.trim() || null,
+    numero_serie: f.serie.value.trim() || null, numero_lot: f.lot.value.trim() || null, date_fabrication: f.fab.value || null,
+    date_achat: f.achat.value || null, date_mise_en_service: f.mes.value || null, etat: f.etat.value, commentaire: f.com.value.trim() || null,
+    dispositif_medical: !!cat.medical, mobile: !!cat.mobile, maj_le: new Date().toISOString() };
+  const { error } = await SB.from('plateau_equipements').update(ligne).eq('id', id);
+  if (error) { toast(messageLisible(error), false); return; }
+  fermerModal(); toast('Équipement modifié'); fichePlateau(plateauId);
 }

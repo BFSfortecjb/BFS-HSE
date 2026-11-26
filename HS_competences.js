@@ -147,7 +147,7 @@ function formPersonnel(id) {
     <label>Fonction<input id="pe_fonction" value="${esc(p.fonction || '')}"></label>
     <label>Agence<input id="pe_agence" value="${esc(p.agence || '')}"></label>
     <label>Compte Univers BFS <small>facultatif</small><select id="pe_profil">${optionsProfils(p.profil_id)}</select></label>
-    <div class="barre"><button class="btn sec" onclick="fermerModal()">Annuler</button>
+    <div class="barre">${id ? `<button class="btn sec" onclick="mettreALaCorbeille('personnel','${esc(id)}',${jq((p.nom || '') + ' ' + (p.prenom || ''))},rendreCompetences)">Supprimer</button>` : ''}<button class="btn sec" onclick="fermerModal()">Annuler</button>
       <button class="btn" onclick="enregistrerPersonnel('${esc(id || '')}')">Enregistrer</button></div>`);
 }
 async function enregistrerPersonnel(id) {

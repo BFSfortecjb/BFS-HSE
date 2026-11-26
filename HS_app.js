@@ -2,9 +2,9 @@
 'use strict';
 // Écrans : connexion, navigation par onglets, démarrage.
 function onglets() {
-  return [['echeances', 'Échéances'], ['vehicules', 'Véhicules'], ['epi', peutEcrire() ? 'EPI' : 'Mes EPI'], ['plateau', 'Plateau technique'], ['competences', peutEcrire() ? 'Compétences' : 'Mes compétences']];
+  return [['echeances', 'Échéances'], ['vehicules', 'Véhicules'], ['epi', peutEcrire() ? 'EPI' : 'Mes EPI'], ['plateau', 'Plateau technique'], ['competences', peutEcrire() ? 'Compétences' : 'Mes compétences']].concat(peutEcrire() ? [['corbeille', 'Corbeille']] : []);
 }
-const RENDUS = { echeances: rendreEcheances, vehicules: rendreVehicules, epi: rendreEpi, plateau: rendrePlateau, competences: rendreCompetences };
+const RENDUS = { echeances: rendreEcheances, vehicules: rendreVehicules, epi: rendreEpi, plateau: rendrePlateau, competences: rendreCompetences, corbeille: rendreCorbeille };
 
 function ecranConnexion(msg) {
   $('#app').innerHTML = `
