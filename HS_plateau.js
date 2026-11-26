@@ -10,6 +10,9 @@ const CAT_PLATEAU = {
   charge_contrainte: { nom: 'Charge de contrainte', types: ['verif_charges_contrainte'] },
   dae: { nom: 'DAE (défibrillateur)', types: ['verif_dispositif_medical'], medical: true,
     peremptions: [['peremption_electrodes', 'Péremption des électrodes'], ['peremption_batterie', 'Péremption de la batterie']] },
+  mallette_mobile: { nom: 'Mallette mobile (intra)', types: ['verif_generale_plateau'], mobile: true },
+  tableau_mobile: { nom: 'Tableau électrique mobile', types: ['verif_armoire_electrique'], mobile: true },
+  armoire_mobile: { nom: 'Armoire électrique mobile', types: ['verif_armoire_electrique'], mobile: true },
   materiel_secourisme: { nom: 'Matériel de secourisme (trousse, oxygène, aspirateur…)', types: ['verif_dispositif_medical'], medical: true,
     peremptions: [['peremption_consommables_secours', 'Péremption des consommables']] },
   autre: { nom: 'Autre matériel', types: ['verif_generale_plateau'] }
@@ -64,6 +67,7 @@ async function fichePlateau(id) {
   const noms = await nomsAgents([p.data.responsable_id]);
   const estResp = p.data.responsable_id === S.user.id, peutTraiter = peutEcrire() || estResp;
   const ech = S.echeances.filter(e => ids.includes(e.plateau_equipement_id));
+  const sortis = new Set(ids.length ? ((await SB.from('equipement_sorties').select('equipement_id').in('equipement_id', ids).is('retour_le', null)).data || []).map(x => x.equipement_id) : []);
   const nomEq = eid => (equips.find(e => e.id === eid) || {}).designation || '';
   $('#contenu').innerHTML = `
     <div class="barre"><button class="btn sec" onclick="rafraichir()">← Retour</button>
@@ -74,12 +78,12 @@ async function fichePlateau(id) {
       <p>Responsable du plateau : <b>${esc(noms[p.data.responsable_id] || '—')}</b></p></div>
     <h3>Matériel</h3>
     ${equips.length ? `<div class="tableau"><table><thead><tr><th>Désignation</th><th>Catégorie</th><th>Marque / modèle</th><th>N° série / lot</th><th>État</th><th>Suivi</th><th></th></tr></thead>
-      <tbody>${equips.map(e => `<tr><td><b>${esc(e.designation)}</b></td><td>${esc((CAT_PLATEAU[e.categorie] || {}).nom)}</td>
+      <tbody>${equips.map(e => `<tr><td><b>${esc(e.designation)}</b>${e.mobile ? (sortis.has(e.id) ? ' <span class="badge av">En sortie</span>' : ' <small>(mobile)</small>') : ''}</td><td>${esc((CAT_PLATEAU[e.categorie] || {}).nom)}</td>
         <td>${esc([e.marque, e.modele].filter(Boolean).join(' ')) || '—'}</td>
         <td>${esc(e.numero_serie) || '—'}${e.numero_lot ? '<br><small>lot ' + esc(e.numero_lot) + '</small>' : ''}</td>
         <td>${esc(ETATS_EPI[e.etat] || e.etat)}</td>
         <td>${pireEtat(S.echeances.filter(x => x.plateau_equipement_id === e.id)) ? badgeEtat(pireEtat(S.echeances.filter(x => x.plateau_equipement_id === e.id))) : '—'}</td>
-        <td class="nowrap"><button class="btn sec petit" onclick="formSignalement('${esc(e.id)}','${esc(id)}')">Signaler un défaut</button></td></tr>`).join('')}</tbody></table></div>`
+        <td class="nowrap"><button class="btn sec petit" onclick="ficheEquipement('${esc(e.id)}','${esc(id)}')">Contenu</button> <button class="btn sec petit" onclick="formSignalement('${esc(e.id)}','${esc(id)}')">Signaler un défaut</button></td></tr>`).join('')}</tbody></table></div>`
       : '<p class="vide">Aucun matériel dans ce plateau.</p>'}
     <h3>Échéances du plateau</h3>
     ${ech.length ? `<div class="tableau"><table><thead><tr><th>Élément</th><th>Échéance</th><th>Dernière</th><th>Prochaine</th><th>Reste</th><th>État</th><th></th></tr></thead>
@@ -156,7 +160,7 @@ async function enregistrerEquipement(ev, plateauId) {
   const ligne = { plateau_id: plateauId, categorie: f.cat.value, designation: f.desig.value.trim(), marque: f.marque.value.trim() || null,
     modele: f.modele.value.trim() || null, numero_serie: f.serie.value.trim() || null, numero_lot: f.lot.value.trim() || null,
     date_fabrication: f.fab.value || null, date_achat: f.achat.value || null, date_mise_en_service: f.mes.value || null,
-    dispositif_medical: !!cat.medical, commentaire: f.com.value.trim() || null };
+    dispositif_medical: !!cat.medical, mobile: !!cat.mobile, commentaire: f.com.value.trim() || null };
   const { data, error } = await SB.from('plateau_equipements').insert(ligne).select('id').single();
   if (error) { toast(messageLisible(error), false); return; }
   const codes = [...cat.types, ...(cat.peremptions || []).map(p => p[0])];
